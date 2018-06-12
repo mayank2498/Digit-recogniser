@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MNIST</title>
+<link rel="stylesheet" href="css/style.css" type="text/css" media="screen" title="no title" charset="utf-8">
+<link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.11.2"> </script>
+</head>
+<body>
+
+
+<div class="row">
+  <div class="column">
+  	<h1 style="margin-top:30px" align="center">MNIST - Convolutional Neural Network</h1>
+  	<div class="row">
+  		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	  	<button id="clear" class="button">Clear</button>
+	  	<button class="button" onclick="predict()">Predict</button>
+	  </div>
+  	<canvas	width="400" height="400"></canvas>
+
+  	<div class="controls">
+  	<ul>
+  		<li class="selected" style="background-color: rgb(255, 255, 255);"></li>
+  	<li class="red"></li>
+  	<li class="blue"></li>
+  	<li class="yellow"></li>
+  	</ul>
+  	<button id="revealColorSelect">New Color</button>
+  	<div id="colorSelect"> <span id="newColor"></span>
+  	<div class="sliders">
+  	<p>
+  	<label for="red">Red</label>
+  	<input id="white" name="red" type="range" min=0 max=255 value=0>
+  	</p>
+  	<p>
+  	<label for="green">Green</label>
+  	<input id="green" name="green" type="range" min=0 max=255 value=0>
+  	</p>
+  	<p>
+  	<label for="blue">Blue</label>
+  	<input id="blue" name="blue" type="range" min=0 max=255 value=0>
+  	</p>
+  	</div>
+  	<div>
+  	<button id="addNewColor">Add Color</button>
+  	</div>
+  	</div>
+  	</div>
+   </div>
+  <div class="column" >
+   	<h1 style="margin-top:30px" align="center">CNN Inputs and Outputs</h1>
+  
+  <div id="yo"></div>
+</div>
+
+
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="js/app.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+
+  document.getElementById('clear').addEventListener('click', function() {
+        context.clearRect(0, 0,400 , 400);
+      }, false);
+
+
+
+function set(text){
+	document.getElementById("yo").innerHTML += text;
+}
+
+function predict() {
+   const imageData = context.getImageData(0, 0, 400, 400);
+
+   //convert to tensor
+   console.log(imageData);
+   var tfImg = tf.fromPixels(imageData, 1);
+   console.log(tfImg);
+   //Resize the image
+   var smalImg = tf.image.resizeBilinear(tfImg, [28, 28]);
+   
+   console.log(smalImg);
+   smalImg = tf.cast(smalImg, 'float32');
+   var tensor = smalImg.expandDims(0);
+   tensor = tensor.div(tf.scalar(255));
+
+   set(tensor.toString());
+    const prediction = model.predict(tensor);
+}
+
+
+
+
+
+
+</script>
+</body>
+</html>

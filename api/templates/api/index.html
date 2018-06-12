@@ -1,0 +1,117 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+  	<style type="text/css">
+  canvas {
+  background-color: blue; 
+  width: 100%;
+  height: auto;
+}
+  	</style>
+    <!-- Load TensorFlow.js -->
+    
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.11.2"> </script>
+    
+    <script>
+  		async function init() {
+  			var path = "{% static "api/saved/model.json" %}";
+  			console.log(path);
+             model = await tf.loadModel(path);
+            console.log("model loaded");
+        }
+
+        init();
+    </script>
+  </head>
+
+  <body>
+
+  		<div class="container">
+      <div class="row">
+        <div class="col-md-4">
+            <canvas id="canvas" width="300" height="300">
+              Sorry, your browser doesn't support the &lt;canvas&gt; element.
+            </canvas>
+        </div> <!-- /col-md-4 -->
+        <div class="col-md-4">
+            <p>item 1: Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+        </div> <!-- /col-md-4 -->
+        <div class="col-md-4">
+            <p>item 2: Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+        </div> <!-- /col-md-4 -->
+      </div> <!-- /row -->
+    </div>
+  </body>
+  <script type="text/javascript">
+  	function $(el) {
+    return document.getElementById(el.replace(/#/, ''));
+}
+;
+var canvas = $('#canvas');
+canvas.width = document.body.clientWidth/2;
+canvas.height = document.body.clientHeight;
+var context = canvas.getContext('2d');
+var start = function(coors) {
+    context.beginPath();
+    context.moveTo(coors.x, coors.y);
+    this.isDrawing = true;
+};
+var move = function(coors) {
+    if (this.isDrawing) {
+        context.strokeStyle = "#fff";
+        context.lineJoin = "round";
+        context.lineWidth = 3;
+        context.lineTo(coors.x, coors.y);
+        context.stroke();
+    }
+};
+var stop = function(coors) {
+    if (this.isDrawing) {
+        this.touchmove(coors);
+        this.isDrawing = false;
+    }
+};
+var drawer = {
+    isDrawing: false,
+    mousedown: start,
+    mousemove: move,
+    mouseup: stop,
+    touchstart: start,
+    touchmove: move,
+    touchend: stop
+};
+var draw = function(e) {
+    var coors = {
+        x: e.clientX || e.targetTouches[0].pageX,
+        y: e.clientY || e.targetTouches[0].pageY
+    };
+    drawer[e.type](coors);
+}
+canvas.addEventListener('mousedown', draw, false);
+canvas.addEventListener('mousemove', draw, false);
+canvas.addEventListener('mouseup', draw, false);
+canvas.addEventListener('touchstart', draw, false);
+canvas.addEventListener('touchmove', draw, false);
+canvas.addEventListener('touchend', draw, false);
+
+var go = function(e) {
+    this.parentNode.removeChild(this);
+    draw(e);
+};
+
+$('#go').addEventListener('mousedown', go, false);
+$('#go').addEventListener('touchstart', go, false);
+
+// prevent elastic scrolling
+document.body.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+}, false);
+// end body:touchmove
+window.onresize = function(e) {
+    canvas.width = document.body.clientWidth;
+    canvas.height = document.body.clientHeight;
+};
+  </script>
+</html>

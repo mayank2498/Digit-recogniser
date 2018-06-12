@@ -1,0 +1,212 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<title>MNIST</title>
+<style type="text/css">
+  h5 {
+font: bold italic 2em/1em "Times New Roman", "MS Serif", "New York", serif;
+margin: 0;
+padding: 0;
+color: black;
+border-top: solid #e7ce00 medium;
+border-bottom: dotted #e7ce00 thin;
+width: 500px;
+}
+
+.btn {
+    border: none;
+    background-color: white;
+    padding: 14px 28px;
+    font-size: 16px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+/* On mouse-over */
+.btn:hover {background: #eee;}
+
+
+</style>
+
+ 
+<link rel="stylesheet" href="{% static 'api/css/style.css' %}" type="text/css" media="screen" title="no title" charset="utf-8">
+<link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Merienda+One' rel='stylesheet' type='text/css'>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.11.2"> </script>
+</head>
+<body>
+
+
+<div class="row">
+  <div class="column">
+  	<h1 style="margin-top:30px" align="center">MNIST - Convolutional Neural Network</h1>
+
+  	<div class="row">
+
+  		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	  	<button id="clear" class="button">Clear</button>
+	  	<button class="button" onclick="predict()">Predict</button>
+
+	  </div>
+    
+  	<canvas	width="400" height="400"></canvas>
+
+  	<div class="controls">
+  	<ul>
+  		<li class="selected" style="background-color: rgb(255, 255, 255);"></li>
+  	<li class="red"></li>
+  	<li class="blue"></li>
+  	<li class="yellow"></li>
+  	</ul>
+ 
+  	</div>
+   </div>
+
+
+  <div class="column" >
+   	<h1 style="margin-top:30px" align="center">Output from Softmax Layer</h1>
+    <br><h5>Most Probable Answer : <span id="ans"></span> <mark><span id="ans" style="align:center;"></span></mark></h5><br>
+
+   <div style="display: inline;">
+    <button style="display: inline-block;width: 70px;height: 60px;"><h1>0</button>
+        <span id="0" style="  font: 400 40px/1.2 'Merienda One', Helvetica, sans-serif;
+      color: rgba(0,0,0,0.7);
+      text-shadow: 3px 3px 3px #fff;"> </span></h1>
+  </div><br>
+
+  <div style="display: inline;">
+    <button style="display: inline-block;width: 70px;height: 60px;"><h1>1</button>
+        <span id="1" style="  font: 400 40px/1.2 'Merienda One', Helvetica, sans-serif;
+      color: rgba(0,0,0,0.7);
+      text-shadow: 3px 3px 3px #fff;"> </span></h1>
+  </div><br>
+    
+      <div style="display: inline;">
+    <button style="display: inline-block;width: 70px;height: 60px;"><h1>2</button>
+        <span id="2" style="  font: 400 40px/1.2 'Merienda One', Helvetica, sans-serif;
+      color: rgba(0,0,0,0.7);
+      text-shadow: 3px 3px 3px #fff;"> </span></h1>
+  </div><br>
+    <div style="display: inline;">
+    <button style="display: inline-block;width: 70px;height: 60px;"><h1>3</button>
+        <span id="3" style="  font: 400 40px/1.2 'Merienda One', Helvetica, sans-serif;
+      color: rgba(0,0,0,0.7);
+      text-shadow: 3px 3px 3px #fff;"> </span></h1>
+  </div><br>
+    <div style="display: inline;">
+    <button style="display: inline-block;width: 70px;height: 60px;"><h1>4</button>
+        <span id="4" style="  font: 400 40px/1.2 'Merienda One', Helvetica, sans-serif;
+      color: rgba(0,0,0,0.7);
+      text-shadow: 3px 3px 3px #fff;"> </span></h1>
+  </div><br>
+    <div style="display: inline;">
+    <button style="display: inline-block;width: 70px;height: 60px;"><h1>5</button>
+        <span id="5" style="  font: 400 40px/1.2 'Merienda One', Helvetica, sans-serif;
+      color: rgba(0,0,0,0.7);
+      text-shadow: 3px 3px 3px #fff;"> </span></h1>
+  </div><br>
+    <div style="display: inline;">
+    <button style="display: inline-block;width: 70px;height: 60px;"><h1>6</button>
+        <span id="6" style="  font: 400 40px/1.2 'Merienda One', Helvetica, sans-serif;
+      color: rgba(0,0,0,0.7);
+      text-shadow: 3px 3px 3px #fff;"> </span></h1>
+  </div><br>
+    <div style="display: inline;">
+    <button style="display: inline-block;width: 70px;height: 60px;"><h1>7</button>
+        <span id="7" style="  font: 400 40px/1.2 'Merienda One', Helvetica, sans-serif;
+      color: rgba(0,0,0,0.7);
+      text-shadow: 3px 3px 3px #fff;"> </span></h1>
+  </div><br>
+
+
+    <div style="display: inline;">
+    <button style="display: inline-block;width: 70px;height: 60px;"><h1>8</button>
+        <span id="8" style="  font: 400 40px/1.2 'Merienda One', Helvetica, sans-serif;
+      color: rgba(0,0,0,0.7);
+      text-shadow: 3px 3px 3px #fff;"> </span></h1>
+  </div><br>
+
+  <div style="display: inline;">
+    <button style="display: inline-block;width: 70px;height: 60px;"><h1>9</button>
+        <span id="9" style="  font: 400 40px/1.2 'Merienda One', Helvetica, sans-serif;
+      color: rgba(0,0,0,0.7);
+      text-shadow: 3px 3px 3px #fff;"> </span></h1>
+  </div><br>
+
+
+    
+
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="{% static 'api/js/app.js'%}" type="text/javascript" charset="utf-8"></script>
+
+
+<script>
+  async function init() {
+    var path = "{% static "api/saved/model.json" %}";
+    console.log(path);
+         model = await tf.loadModel(path);
+        console.log("model loaded");
+    }
+
+    init();
+</script>
+<script type="text/javascript">
+
+  document.getElementById('clear').addEventListener('click', function() {
+        context.clearRect(0, 0,400 , 400);
+      }, false);
+
+
+function set(text){
+	document.getElementById("yo").innerHTML = text;
+}
+
+function predict() {
+   
+   const imageData = context.getImageData(0, 0, 400, 400);
+
+   //convert to tensor
+   var tfImg = tf.fromPixels(imageData, 1);
+   //console.log(tfImg.shape);
+   //Resize the image
+   var smalImg = tf.image.resizeBilinear(tfImg, [28, 28]).reshape([1,28,28]);
+   
+   
+   smalImg = tf.cast(smalImg, 'float32');
+   var tensor = smalImg.expandDims(0);
+   tensor = tensor.div(tf.scalar(255));
+    
+   //tensor.append(null);
+    const prediction = model.predict(tensor);
+    const predictedValues = prediction.dataSync();
+    best = predictedValues[0];
+    best_index = 0;
+     for (index = 0; index < predictedValues.length; index++) {
+      if ( predictedValues[index] > best ) { best_index = index; best=predictedValues[index];}
+      x  = Math.round(predictedValues[index]*100);
+      document.getElementById(index).innerHTML = '-&nbsp;&nbsp;' + x + ' %';
+           
+    }   
+    console.log(best_index);
+    document.getElementById("ans").innerHTML  = best_index;
+    document.getElementById(best_index).innerHTML = '-&nbsp;&nbsp;&nbsp;' + "<mark>" +  
+    Math.round(predictedValues[best_index]*100) + '</mark> %';
+
+} 
+
+
+
+
+
+
+</script>
+</body>
+</html>
